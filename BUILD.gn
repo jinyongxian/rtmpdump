@@ -1,0 +1,80 @@
+#----------------------------------------------------
+# Author: stoneliu@boyaa.com
+# Time  : Thu May  7 18:05:00 CST 2020
+#----------------------------------------------------
+
+# This is an automatically generated Android.mk or Application.mk, in order to reduce unnecessary retransmission labor.
+# Android.mk: For more details, please see "http://developer.android.com/ndk/guides/android_mk.html".
+# Application.mk: For more details, please see "http://developer.android.com/ndk/guides/application_mk.html".
+# Can identify the suffix for .c .cc .cpp .S and .a .so.
+
+config("public_config") {
+  include_dirs = [ "." ]
+}
+
+config("librtmp_config") {
+  if (is_win) {
+    cflags = [
+      "/wd4047",
+      "/wd4310",
+      "/wd4701",
+      "/wd4005",
+    ]
+  } else {
+    cflags = [
+      "-Wno-unused-const-variable",
+      "-Wno-sign-compare",
+      "-Wno-delete-incomplete",
+      "-Wno-deprecated-register",
+      "-Wno-null-dereference",
+      "-Wno-non-virtual-dtor",
+      "-Wno-tautological-compare",
+    ]
+    ldflags = [ "-lz" ]
+  }
+
+  defines = [
+    "RTMPDUMP_VERSION=\"2.4\"",
+    "USE_OPENSSL",
+  ]
+}
+
+static_library("librtmp") {
+  sources = [
+    "librtmp/amf.c",
+    "librtmp/hashswf.c",
+    "librtmp/log.c",
+    "librtmp/parseurl.c",
+    "librtmp/rtmp.c",
+  ]
+
+  configs += [ ":librtmp_config" ]
+  public_configs = [ ":public_config" ]
+  deps = [
+    "//third_party/boringssl:boringssl",
+  ]
+}
+
+executable("rtmpdump") {
+  sources = [ "rtmpdump.c" ]
+  deps = [ ":librtmp" ]
+  configs += [ ":librtmp_config" ]
+}
+
+executable("rtmpgw") {
+  sources = [ "rtmpgw.c", "thread.c" ]
+  deps = [ ":librtmp" ]
+  configs += [ ":librtmp_config" ]
+}
+
+executable("rtmpsrv") {
+  sources = [ "rtmpsrv.c", "thread.c" ]
+  deps = [ ":librtmp" ]
+  configs += [ ":librtmp_config" ]
+}
+
+executable("rtmpsuck") {
+  sources = [ "rtmpsuck.c", "thread.c" ]
+  deps = [ ":librtmp" ]
+  configs += [ ":librtmp_config" ]
+}

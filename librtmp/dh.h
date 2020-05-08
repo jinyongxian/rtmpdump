@@ -266,7 +266,7 @@ DHInit(int nKeyBits)
 
   MP_set_w(dh->g, 2);	/* base 2 */
 
-  dh->length = nKeyBits;
+  dh->priv_length = (unsigned)nKeyBits;
   return dh;
 
 failed:
